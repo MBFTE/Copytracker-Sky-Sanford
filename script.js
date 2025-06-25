@@ -16,7 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function switchClient(client) {
     currentClient = client;
     document.querySelectorAll(".client").forEach(c => c.classList.remove("active"));
-    [...clientList.children].find(li => li.textContent.includes(client)).classList.add("active");
+    const match = [...clientList.children].find(li => li.textContent.includes(client));
+    if (match) match.classList.add("active");
     clientHeader.textContent = client;
     renderTabs();
   }
