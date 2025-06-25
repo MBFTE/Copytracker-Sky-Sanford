@@ -23,7 +23,7 @@ header {
   gap: 10px;
   margin-bottom: 10px;
 }
-input {
+input, select {
   flex: 1 1 200px;
   padding: 8px;
 }
@@ -79,5 +79,7 @@ th, td {
 }
 th {
   background: #f9f9f9;
-  font-weight: 600;
+}
+td[contenteditable="true"] {
+  background: #fffceb;
 }

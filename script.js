@@ -1,57 +1,68 @@
 
-const months = [
-  "M1", "M2", "M3", "M4", "M5", "M6",
-  "M7", "M8", "M9", "M10", "M11", "M12"
-];
 const platforms = ["facebook", "display", "ctv", "audio", "tiktok"];
 
 document.getElementById("creativeForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const creativeName = document.getElementById("creativeName").value.trim();
-  const month = (creativeName.match(/M\d+/i) || ["M1"])[0].toUpperCase();
+  const name = document.getElementById("creativeName").value.trim();
+  const startDate = new Date(document.getElementById("startDate").value.trim());
+  const endDate = new Date(document.getElementById("endDate").value.trim() || startDate);
+  const adpilerLink = document.getElementById("adpilerLink").value.trim();
+  const updatedBy = document.getElementById("updatedBy").value.trim();
   const utmUrl = document.getElementById("utmUrl").value.trim();
+  const status = document.getElementById("status").value;
+  const months = getMonthRange(startDate, endDate);
   const platform = detectPlatformFromUTM(utmUrl);
 
   const entry = {
-    month: month,
-    creativeName: creativeName,
-    startDate: document.getElementById("startDate").value.trim(),
-    endDate: document.getElementById("endDate").value.trim(),
-    adpilerLink: document.getElementById("adpilerLink").value.trim(),
-    status: document.getElementById("status").value.trim(),
-    updatedBy: document.getElementById("updatedBy").value.trim(),
+    creativeName: name,
+    startDate: startDate.toISOString().split('T')[0],
+    endDate: endDate.toISOString().split('T')[0],
+    adpilerLink: adpilerLink,
     utmUrl: utmUrl,
     platform: platform,
+    updatedBy: updatedBy,
+    status: status,
     updatedAt: new Date().toISOString()
   };
 
   let all = JSON.parse(localStorage.getItem("creativeData") || "{}");
-  if (!all[month]) all[month] = [];
-  all[month].push(entry);
+  months.forEach(m => {
+    if (!all[m]) all[m] = [];
+    all[m].push(entry);
+  });
   localStorage.setItem("creativeData", JSON.stringify(all));
 
   this.reset();
   renderTabs();
-  renderTables(month);
+  renderTables(months[0]);
 });
 
 function detectPlatformFromUTM(url) {
-  const lower = url.toLowerCase();
-  if (lower.includes("facebook")) return "facebook";
-  if (lower.includes("display")) return "display";
-  if (lower.includes("ctv")) return "ctv";
-  if (lower.includes("audio")) return "audio";
-  if (lower.includes("tiktok")) return "tiktok";
+  const u = url.toLowerCase();
+  if (u.includes("facebook")) return "facebook";
+  if (u.includes("display")) return "display";
+  if (u.includes("ctv")) return "ctv";
+  if (u.includes("audio")) return "audio";
+  if (u.includes("tiktok")) return "tiktok";
   return "unknown";
 }
 
+function getMonthRange(start, end) {
+  const months = [];
+  for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
+    months.push("M" + (d.getMonth() + 1));
+  }
+  return months;
+}
+
 function renderTabs() {
+  const data = JSON.parse(localStorage.getItem("creativeData") || "{}");
   const tabContainer = document.getElementById("monthTabs");
   tabContainer.innerHTML = "";
-  months.forEach((month, i) => {
+  Object.keys(data).sort().forEach((month, i) => {
     const tab = document.createElement("div");
-    tab.className = "tab" + (i === 5 ? " active" : ""); // default M6
+    tab.className = "tab" + (i === 0 ? " active" : "");
     tab.textContent = month;
     tab.onclick = () => {
       document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -66,9 +77,12 @@ function renderTables(month) {
   const container = document.getElementById("platformTables");
   container.innerHTML = "";
   const data = JSON.parse(localStorage.getItem("creativeData") || "{}");
-  const entries = (data[month] || []).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  const entries = data[month] || [];
 
   platforms.forEach(platform => {
+    const platformEntries = entries.filter(e => e.platform === platform);
+    if (platformEntries.length === 0) return;
+
     const section = document.createElement("section");
     section.className = "platform-section";
     const table = document.createElement("table");
@@ -78,20 +92,22 @@ function renderTables(month) {
         <th>Creative</th><th>Start</th><th>End</th><th>Status</th>
         <th>Adpiler</th><th>Click URL</th><th>Updated By</th><th>Last Updated</th>
       </tr></thead><tbody></tbody>`;
-    entries.filter(e => e.platform === platform).forEach(entry => {
+
+    platformEntries.forEach((entry, idx) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${entry.creativeName}</td>
-        <td>${entry.startDate}</td>
-        <td>${entry.endDate}</td>
-        <td>${entry.status}</td>
+        <td contenteditable="true">${entry.creativeName}</td>
+        <td contenteditable="true">${entry.startDate}</td>
+        <td contenteditable="true">${entry.endDate}</td>
+        <td contenteditable="true">${entry.status}</td>
         <td><a href="${entry.adpilerLink}" target="_blank">View</a></td>
         <td><a href="${entry.utmUrl}" target="_blank">${entry.utmUrl}</a></td>
-        <td>${entry.updatedBy}</td>
+        <td contenteditable="true">${entry.updatedBy}</td>
         <td>${new Date(entry.updatedAt).toLocaleDateString()}</td>
       `;
       table.querySelector("tbody").appendChild(row);
     });
+
     section.appendChild(table);
     container.appendChild(section);
   });
@@ -99,5 +115,6 @@ function renderTables(month) {
 
 window.onload = function() {
   renderTabs();
-  renderTables("M6");
+  const firstTab = document.querySelector(".tab");
+  if (firstTab) renderTables(firstTab.textContent);
 };
