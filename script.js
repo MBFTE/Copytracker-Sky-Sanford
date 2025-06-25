@@ -310,16 +310,9 @@ function renderClientList() {
 }
 
 window.onload = async () => {
-  githubToken = localStorage.getItem("githubToken");
-  if (!githubToken) {
-    githubToken = prompt("Please enter your GitHub personal access token:");
-    if (githubToken) {
-      localStorage.setItem("githubToken", githubToken);
-    } else {
-      alert("GitHub token is required to load data.");
-      return;
-    }
-  }
+  // Hardcode your token here - KEEP THIS FILE PRIVATE
+  githubToken = "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";
+
   await loadData();
   renderClientList();
   if (currentClient) switchClient(currentClient);
