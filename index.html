@@ -2,49 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Creative Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="logo">FTE Tracker</div>
-      <ul id="clientList">
-        <li class="client active" onclick="switchClient('SkySanford')">Sky Sanford</li>
-        <li class="client" onclick="switchClient('DeLandMotorsports')">DeLand Motorsports</li>
-        <li class="client" onclick="switchClient('BurtchTallow')">Burtch Tallow</li>
-        <li class="client" onclick="addClient()">+ Add Client</li>
+  <div id="app">
+    <aside id="sidebar">
+      <h1>Clients</h1>
+      <ul id="client-list">
+        <!-- Filled by JS -->
       </ul>
+      <li onclick="addClient()">➕ Add Client</li>
     </aside>
-    <main class="main">
+
+    <main>
       <header>
-        <h1 id="clientHeader">Sky Sanford</h1>
-        <div>
-          <button onclick="addCreative()" class="add-btn">+ Add Creative</button>
-          <button onclick="addMonth()">+ Add Month</button>
-        </div>
+        <h2>Current Client: <span id="current-client">SkySanford</span></h2>
       </header>
-      <form id="creativeForm">
-        <select id="monthDropdown" required>
-<option value="M1">M1</option><option value="M2">M2</option><option value="M3">M3</option><option value="M4">M4</option><option value="M5">M5</option><option value="M6">M6</option><option value="M7">M7</option><option value="M8">M8</option><option value="M9">M9</option><option value="M10">M10</option><option value="M11">M11</option><option value="M12">M12</option>
-        </select>
-        <input type="date" id="startDate" required />
-        <input type="date" id="endDate" />
-        <input type="text" id="creativeName" placeholder="Creative Name" required />
-        <input type="url" id="adpilerLink" placeholder="Adpiler Link" required />
-        <input type="url" id="utmUrl" placeholder="UTM URL" required />
-        <select id="status">
-          <option value="Live">Live</option>
-          <option value="Paused">Paused</option>
-          <option value="Retired">Retired</option>
-        </select>
-        <input type="text" id="updatedBy" placeholder="Updated By" required />
-        <button type="submit">Submit</button>
-      </form>
-      <div id="monthTabs" class="tabs"></div>
-      <div id="platformTables" class="content"></div>
+
+      <section id="form-section">
+        <h3>Add Creative</h3>
+        <form id="creative-form" onsubmit="event.preventDefault(); submitCreative();">
+          <input type="text" id="creative-name" placeholder="Creative Name" required />
+          <input type="url" id="adpiler-link" placeholder="Adpiler Link" />
+          <input type="url" id="utm-link" placeholder="UTM Tagged URL" required />
+          <select id="status">
+            <option value="Live">Live</option>
+            <option value="Paused">Paused</option>
+            <option value="Retired">Retired</option>
+          </select>
+          <input type="text" id="updated-by" placeholder="Updated By" />
+          <input type="date" id="start-date" required />
+          <input type="date" id="end-date" required />
+          <button type="submit">Add Creative</button>
+        </form>
+      </section>
+
+      <section id="tabs">
+        <!-- Dynamic month + platform sections go here -->
+      </section>
     </main>
   </div>
+
+  <!-- ✅ JS loaded after everything else -->
   <script src="script.js"></script>
 </body>
 </html>
