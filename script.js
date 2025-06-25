@@ -20,18 +20,58 @@ document.addEventListener("DOMContentLoaded", () => {
     if (match) match.classList.add("active");
     clientHeader.textContent = client;
     renderTabs();
-  }
+  };
 
   window.addClient = function () {
     const name = prompt("Enter new client name:");
-    if (name) {
-      const li = document.createElement("li");
-      li.className = "client";
-      li.textContent = name;
-      li.onclick = () => switchClient(name);
-      clientList.insertBefore(li, clientList.lastElementChild);
+    if (name && !creatives[name]) {
       creatives[name] = {};
       saveData();
+      renderClientList();
+      switchClient(name);
+    }
+  };
+
+  function renderClientList() {
+    clientList.innerHTML = "";
+    const clients = Object.keys(creatives);
+    if (clients.length === 0) {
+      creatives["SkySanford"] = {};
+      saveData();
+    }
+    Object.keys(creatives).forEach(client => {
+      const li = document.createElement("li");
+      li.className = "client";
+      li.textContent = client;
+      li.onclick = () => switchClient(client);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑️";
+      delBtn.style.marginLeft = "10px";
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`Delete client "${client}"?`)) {
+          delete creatives[client];
+          saveData();
+          renderClientList();
+          currentClient = Object.keys(creatives)[0] || "";
+          if (currentClient) switchClient(currentClient);
+        }
+      };
+
+      li.appendChild(delBtn);
+      clientList.appendChild(li);
+    });
+
+    const addLi = document.createElement("li");
+    addLi.className = "add-client";
+    addLi.innerHTML = "<button>Add New Client</button>";
+    addLi.onclick = addClient;
+    clientList.appendChild(addLi);
+
+    // Switch to default client if exists
+    if (clients.length > 0) {
+      switchClient(currentClient);
     }
   }
 
@@ -104,45 +144,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".add-btn").onclick = () => creativeForm.scrollIntoView({ behavior: 'smooth' });
 
-  switchClient(currentClient);
-});
-
-
-function renderClientList() {
-  clientList.innerHTML = "";
-  Object.keys(creatives).forEach(client => {
-    const li = document.createElement("li");
-    li.className = "client";
-    li.textContent = client;
-    li.onclick = () => switchClient(client);
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️";
-    delBtn.style.marginLeft = "10px";
-    delBtn.onclick = (e) => {
-      e.stopPropagation();
-      if (confirm(`Delete client "${client}"?`)) {
-        delete creatives[client];
-        saveData();
-        renderClientList();
-        currentClient = Object.keys(creatives)[0] || "";
-        if (currentClient) switchClient(currentClient);
-      }
-    };
-
-    li.appendChild(delBtn);
-    clientList.appendChild(li);
-  });
-
-  const addLi = document.createElement("li");
-  addLi.className = "add-client";
-  addLi.innerHTML = "<button>Add New Client</button>";
-  addLi.onclick = addClient;
-  clientList.appendChild(addLi);
-
-  switchClient(currentClient);
-}
-
-window.onload = () => {
   renderClientList();
-};
+});
