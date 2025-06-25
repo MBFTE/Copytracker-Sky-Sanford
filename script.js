@@ -1,1 +1,100 @@
-// JavaScript logic to be implemented for form handling and client switching.
+
+document.addEventListener("DOMContentLoaded", () => {
+  const clientList = document.getElementById("clientList");
+  const clientHeader = document.getElementById("clientHeader");
+  const creativeForm = document.getElementById("creativeForm");
+  const monthTabs = document.getElementById("monthTabs");
+  const platformTables = document.getElementById("platformTables");
+
+  let currentClient = "SkySanford";
+  let creatives = JSON.parse(localStorage.getItem("creatives") || "{}");
+
+  function saveData() {
+    localStorage.setItem("creatives", JSON.stringify(creatives));
+  }
+
+  function switchClient(client) {
+    currentClient = client;
+    document.querySelectorAll(".client").forEach(c => c.classList.remove("active"));
+    [...clientList.children].find(li => li.textContent.includes(client)).classList.add("active");
+    clientHeader.textContent = client;
+    renderTabs();
+  }
+
+  function addClient() {
+    const name = prompt("Enter new client name:");
+    if (name) {
+      const li = document.createElement("li");
+      li.className = "client";
+      li.textContent = name;
+      li.onclick = () => switchClient(name);
+      clientList.insertBefore(li, clientList.lastElementChild);
+      creatives[name] = {};
+      saveData();
+    }
+  }
+
+  function renderTabs() {
+    monthTabs.innerHTML = "";
+    platformTables.innerHTML = "";
+    const months = creatives[currentClient] || {};
+    Object.keys(months).sort().forEach(month => {
+      const tab = document.createElement("div");
+      tab.className = "tab";
+      tab.textContent = month;
+      tab.onclick = () => renderMonth(month);
+      monthTabs.appendChild(tab);
+    });
+  }
+
+  function renderMonth(month) {
+    platformTables.innerHTML = "";
+    const data = creatives[currentClient][month] || {};
+    ["Facebook", "Display", "CTV", "Audio", "TikTok"].forEach(platform => {
+      if (!data[platform]) return;
+      const table = document.createElement("table");
+      const thead = `<tr><th>Name</th><th>Adpiler</th><th>UTM</th><th>Status</th><th>Updated By</th></tr>`;
+      table.innerHTML = `<caption>${platform}</caption><thead>${thead}</thead><tbody></tbody>`;
+      data[platform].forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td contenteditable="true">${item.name}</td>
+          <td contenteditable="true"><a href="${item.adpiler}" target="_blank">Link</a></td>
+          <td contenteditable="true"><a href="${item.utm}" target="_blank">UTM</a></td>
+          <td><span class="status-pill status-${item.status}">${item.status}</span></td>
+          <td contenteditable="true">${item.updatedBy}</td>
+        `;
+        table.querySelector("tbody").appendChild(tr);
+      });
+      platformTables.appendChild(table);
+    });
+  }
+
+  creativeForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const month = document.getElementById("monthDropdown").value;
+    const name = document.getElementById("creativeName").value;
+    const adpiler = document.getElementById("adpilerLink").value;
+    const utm = document.getElementById("utmUrl").value;
+    const status = document.getElementById("status").value;
+    const updatedBy = document.getElementById("updatedBy").value;
+
+    const platform = utm.includes("facebook") ? "Facebook"
+                    : utm.includes("tiktok") ? "TikTok"
+                    : utm.includes("audio") ? "Audio"
+                    : utm.includes("ctv") ? "CTV"
+                    : "Display";
+
+    creatives[currentClient] = creatives[currentClient] || {};
+    creatives[currentClient][month] = creatives[currentClient][month] || {};
+    creatives[currentClient][month][platform] = creatives[currentClient][month][platform] || [];
+    creatives[currentClient][month][platform].push({ name, adpiler, utm, status, updatedBy });
+    saveData();
+    renderTabs();
+    creativeForm.reset();
+  });
+
+  document.querySelector(".add-btn").onclick = () => creativeForm.scrollIntoView({ behavior: 'smooth' });
+
+  switchClient(currentClient);
+});
