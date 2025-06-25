@@ -1,5 +1,21 @@
 {
-  "SkySanford": {},
+  "SkySanford": {
+    "M1": {
+      "Social": [
+        {
+          "name": "Sample Creative 1",
+          "adpiler": "https://example.com/adpiler1",
+          "utm": "https://example.com/utm1?utm_source=facebook",
+          "status": "Live",
+          "updatedBy": "Admin",
+          "lastUpdated": "2025-06-25"
+        }
+      ],
+      "Display": []
+    },
+    "M2": {},
+    "M3": {}
+  },
   "Test Client": {},
   "test client 2": {}
 }
