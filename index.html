@@ -3,46 +3,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Creative Tracker</title>
+  <title>Client Creative Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Creative Tracker</h1>
-    <p>Track creative by month, platform, and service</p>
-  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Clients</h2>
+      <ul id="clientList">
+        <li class="active" onclick="switchClient('SkySanford')">Sky Sanford</li>
+        <li onclick="switchClient('DeLandMotorsports')">DeLand Motorsports</li>
+        <li onclick="switchClient('BurtchTallow')">Burtch Tallow</li>
+        <li onclick="addClient()">+ Add Client</li>
+      </ul>
+    </aside>
+    <main class="main">
+      <header>
+        <h1 id="clientHeader">Creative Tracker: Sky Sanford</h1>
+        <button onclick="addMonth()">+ Add Month</button>
+        <button onclick="deleteMonth()">🗑 Delete Current Month</button>
+      </header>
 
-  <section class="form-container">
-    <form id="creativeForm">
-      <div class="form-group">
-        <select id="startMonth">
-          <option disabled selected>Select Start Month</option>
+      <form id="creativeForm">
+        <select id="monthDropdown" required>
+          <option value="">Select Month</option>
           <option value="M1">M1</option><option value="M2">M2</option><option value="M3">M3</option><option value="M4">M4</option><option value="M5">M5</option><option value="M6">M6</option><option value="M7">M7</option><option value="M8">M8</option><option value="M9">M9</option><option value="M10">M10</option><option value="M11">M11</option><option value="M12">M12</option>
         </select>
         <input type="date" id="startDate" required />
         <input type="date" id="endDate" />
-      </div>
-      <div class="form-group">
         <input type="text" id="creativeName" placeholder="Creative Name" required />
         <input type="url" id="adpilerLink" placeholder="Adpiler Link" required />
-        <select id="status" required>
-          <option disabled selected>Status</option>
+        <input type="url" id="utmUrl" placeholder="UTM URL" required />
+        <select id="status">
           <option value="Live">Live</option>
           <option value="Paused">Paused</option>
           <option value="Retired">Retired</option>
         </select>
         <input type="text" id="updatedBy" placeholder="Updated By" required />
-      </div>
-      <div class="form-group">
-        <input type="url" id="utmUrl" placeholder="UTM Coded Clickthrough URL" required />
-      </div>
-      <button type="submit">Add Creative</button>
-    </form>
-  </section>
+        <button type="submit">Add Creative</button>
+      </form>
 
-  <nav id="monthTabs" class="tabs"></nav>
-  <main id="platformTables" class="content"></main>
-
+      <div id="monthTabs" class="tabs"></div>
+      <div id="platformTables" class="content"></div>
+    </main>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
