@@ -3,36 +3,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Creative Tracker - Multi-Month</title>
+  <title>Creative Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Multi-Month Creative Tracker</h1>
+  <header>
+    <h1>Creative Tracker</h1>
+    <p>Organized by month & platform, auto-sorted by UTM</p>
+  </header>
 
-  <form id="creativeForm">
-    <div class="form-row">
-      <input type="text" id="month" placeholder="Month (e.g., M6)" required />
-      <input type="text" id="startDate" placeholder="Start Date (YYYY-MM-DD)" required />
-      <input type="text" id="endDate" placeholder="End Date (YYYY-MM-DD)" />
-    </div>
-    <div class="form-row">
-      <input type="text" id="creativeName" placeholder="Creative Name" required />
-      <input type="url" id="adpilerLink" placeholder="Adpiler Link" required />
-      <input type="text" id="status" placeholder="Status (Live, Paused, Retired)" />
-      <input type="text" id="updatedBy" placeholder="Updated By" required />
-    </div>
-    <div class="form-row">
-      <input type="url" id="facebookUrl" placeholder="Facebook UTM" />
-      <input type="url" id="displayUrl" placeholder="Display UTM" />
-      <input type="url" id="ctvUrl" placeholder="CTV UTM" />
-      <input type="url" id="audioUrl" placeholder="Audio UTM" />
-      <input type="url" id="tiktokUrl" placeholder="TikTok UTM" />
-    </div>
-    <button type="submit">Add Creative</button>
-  </form>
+  <section class="form-container">
+    <form id="creativeForm">
+      <div class="form-group">
+        <input type="text" id="creativeName" placeholder="Creative Name (e.g., M6 - Father's Day)" required />
+        <input type="text" id="startDate" placeholder="Start Date (YYYY-MM-DD)" required />
+        <input type="text" id="endDate" placeholder="End Date (YYYY-MM-DD)" />
+      </div>
+      <div class="form-group">
+        <input type="url" id="adpilerLink" placeholder="Adpiler Link" required />
+        <input type="text" id="status" placeholder="Status (Live, Paused, Retired)" />
+        <input type="text" id="updatedBy" placeholder="Updated By" required />
+      </div>
+      <div class="form-group">
+        <input type="url" id="utmUrl" placeholder="UTM Coded URL" required />
+      </div>
+      <button type="submit">Add Creative</button>
+    </form>
+  </section>
 
-  <div id="monthTabs"></div>
-  <div id="platformTables"></div>
+  <nav id="monthTabs" class="tabs"></nav>
+  <main id="platformTables" class="content"></main>
 
   <script src="script.js"></script>
 </body>

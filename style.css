@@ -1,61 +1,83 @@
 
 body {
-  font-family: Arial, sans-serif;
-  background: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #2d3e50;
+  color: white;
   padding: 20px;
-}
-h1 {
   text-align: center;
 }
-form {
-  background: #fff;
-  padding: 15px;
-  margin-bottom: 20px;
+.form-container {
+  background: white;
+  margin: 20px;
+  padding: 20px;
   border-radius: 8px;
-  display: grid;
-  gap: 10px;
 }
-.form-row {
+.form-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 10px;
 }
-input, button {
+input {
+  flex: 1 1 200px;
   padding: 8px;
-  flex: 1;
 }
-#monthTabs {
-  margin-bottom: 20px;
-  text-align: center;
+button {
+  padding: 10px 20px;
+  background: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 .tab {
-  display: inline-block;
+  margin: 5px;
   padding: 10px 20px;
-  margin: 2px;
+  border-radius: 20px;
   background: #ccc;
-  border-radius: 5px;
   cursor: pointer;
 }
 .tab.active {
   background: #007bff;
   color: white;
 }
-.platform-section {
-  display: none;
+.content {
+  margin: 20px;
 }
-.platform-section.active {
-  display: block;
+.platform-section {
+  margin-bottom: 40px;
 }
 table {
   width: 100%;
-  background: #fff;
   border-collapse: collapse;
-  margin-bottom: 30px;
+  background: white;
+  border-radius: 5px;
+  overflow: hidden;
+}
+caption {
+  text-align: left;
+  font-weight: bold;
+  padding: 10px;
+  background: #f0f0f0;
 }
 th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
 }
 th {
-  background: #eee;
+  background: #f9f9f9;
+  font-weight: 600;
 }
