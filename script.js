@@ -4,7 +4,7 @@ const BRANCH = "main";
 
 let currentClient = null;
 let creatives = {};
-let githubToken = null; // You'll set this manually in the console for security
+let githubToken = null; // Token stored/retrieved from localStorage
 
 // Utility to call GitHub API
 async function githubRequest(method, path, body = null) {
@@ -310,7 +310,16 @@ function renderClientList() {
 }
 
 window.onload = async () => {
-  githubToken = prompt("Please enter your GitHub personal access token:");
+  githubToken = localStorage.getItem("githubToken");
+  if (!githubToken) {
+    githubToken = prompt("Please enter your GitHub personal access token:");
+    if (githubToken) {
+      localStorage.setItem("githubToken", githubToken);
+    } else {
+      alert("GitHub token is required to load data.");
+      return;
+    }
+  }
   await loadData();
   renderClientList();
   if (currentClient) switchClient(currentClient);
