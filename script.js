@@ -160,15 +160,23 @@ function renderMonthTabs() {
 
   if (!currentClient || !creatives[currentClient]) return;
 
-  const months = Object.keys(creatives[currentClient]).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-
-  months.forEach((month) => {
+  // Always show all 12 months, M1 to M12
+  for (let i = 1; i <= 12; i++) {
+    const month = `M${i}`;
     const section = document.createElement("section");
     section.innerHTML = `<h2>${month}</h2>`;
-    const monthData = creatives[currentClient][month];
+
+    const monthData = creatives[currentClient][month] || {};
 
     ["Social", "Display", "CTV", "Audio", "TikTok", "Other"].forEach((platform) => {
-      if (!monthData[platform] || monthData[platform].length === 0) return;
+      if (!monthData[platform] || monthData[platform].length === 0) {
+        // Render platform header with "No creatives" if empty
+        const emptyCard = document.createElement("div");
+        emptyCard.className = "platform-card";
+        emptyCard.innerHTML = `<h3>${platform}</h3><p><em>No creatives added.</em></p>`;
+        section.appendChild(emptyCard);
+        return;
+      }
 
       const card = document.createElement("div");
       card.className = "platform-card";
@@ -244,7 +252,7 @@ function renderMonthTabs() {
     });
 
     container.appendChild(section);
-  });
+  }
 }
 
 function updateCurrentClient(name) {
