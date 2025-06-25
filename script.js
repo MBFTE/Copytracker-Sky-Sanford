@@ -1,172 +1,309 @@
-let currentClient = "SkySanford";
-let creatives = JSON.parse(localStorage.getItem("creatives")) || {};
+const GITHUB_REPO = "MBFTE/Copytracker-Sky-Sanford";
+const DATA_FILE = "data.json";
+const BRANCH = "main";
 
-function saveData() {
-  localStorage.setItem("creatives", JSON.stringify(creatives));
+let currentClient = null;
+let creatives = {};
+let githubToken = null; // You'll set this manually in the console for security
+
+// Utility to call GitHub API
+async function githubRequest(method, path, body = null) {
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
+  const headers = {
+    Accept: "application/vnd.github+json",
+    Authorization: `token ${githubToken}`,
+  };
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(`GitHub API error: ${err.message}`);
+  }
+  return response.json();
 }
 
-window.switchClient = function(clientName) {
-  currentClient = clientName;
-  document.getElementById("current-client").innerText = clientName;
-  renderMonthTabs();
-};
-
-window.addClient = function() {
-  const name = prompt("Enter new client name:");
-  if (name && !creatives[name]) {
-    creatives[name] = {};
-    saveData();
-    renderClientList();
-    switchClient(name);
-  }
-};
-
-window.deleteClient = function(clientName) {
-  if (confirm(`Delete client "${clientName}"? This cannot be undone.`)) {
-    delete creatives[clientName];
-    saveData();
-    renderClientList();
-    const firstClient = Object.keys(creatives)[0];
-    if (firstClient) {
-      switchClient(firstClient);
-    } else {
-      currentClient = null;
-      document.getElementById("tabs").innerHTML = "";
+// Load data.json from GitHub
+async function loadData() {
+  try {
+    const file = await githubRequest("GET", DATA_FILE);
+    const content = atob(file.content);
+    creatives = JSON.parse(content);
+    if (!currentClient) {
+      currentClient = Object.keys(creatives)[0] || null;
     }
+    renderClientList();
+    if (currentClient) switchClient(currentClient);
+  } catch (e) {
+    console.error("Failed to load data:", e);
+    // Initialize empty data
+    creatives = { SkySanford: {} };
+    currentClient = "SkySanford";
+    await saveData(); // create data.json
+    renderClientList();
+    switchClient(currentClient);
   }
-};
+}
+
+// Save data.json to GitHub (create or update)
+async function saveData() {
+  try {
+    // Get current sha of data.json for update (required by GitHub API)
+    let sha = null;
+    try {
+      const file = await githubRequest("GET", DATA_FILE);
+      sha = file.sha;
+    } catch {
+      sha = null; // file not found, creating new
+    }
+
+    const content = btoa(JSON.stringify(creatives, null, 2));
+    const body = {
+      message: "Update creatives data",
+      content,
+      branch: BRANCH,
+      sha,
+    };
+    await githubRequest("PUT", DATA_FILE, body);
+  } catch (e) {
+    alert("Failed to save data. Check token and repo permissions.");
+    console.error(e);
+  }
+}
+
+function renderClientList() {
+  const sidebar = document.getElementById("client-list");
+  sidebar.innerHTML = "";
+  Object.keys(creatives).forEach((client) => {
+    const li = document.createElement("li");
+    li.className = client === currentClient ? "active" : "";
+    li.innerHTML = `
+      <span style="flex-grow:1;cursor:pointer;">${client}</span>
+      <button title="Delete Client" aria-label="Delete Client">❌</button>
+    `;
+    li.querySelector("span").onclick = () => switchClient(client);
+    li.querySelector("button").onclick = async (e) => {
+      e.stopPropagation();
+      if (confirm(`Delete client "${client}"? This action cannot be undone.`)) {
+        delete creatives[client];
+        if (client === currentClient) {
+          currentClient = Object.keys(creatives)[0] || null;
+        }
+        await saveData();
+        renderClientList();
+        if (currentClient) switchClient(currentClient);
+        else document.getElementById("tabs").innerHTML = "";
+      }
+    };
+    sidebar.appendChild(li);
+  });
+}
 
 function parsePlatform(utm) {
-  utm = utm.toLowerCase();
-  if (utm.includes("facebook")) return "Social";
-  if (utm.includes("display")) return "Display";
-  if (utm.includes("ctv")) return "CTV";
-  if (utm.includes("audio")) return "Audio";
-  if (utm.includes("tiktok")) return "TikTok";
-  return "Unknown";
+  const u = utm.toLowerCase();
+  if (u.includes("facebook")) return "Social";
+  if (u.includes("display")) return "Display";
+  if (u.includes("ctv")) return "CTV";
+  if (u.includes("audio")) return "Audio";
+  if (u.includes("tiktok")) return "TikTok";
+  return "Other";
 }
 
-function getMonthRange(start, end) {
+function getMonthsRange(start, end) {
   const months = [];
-  const startMonth = parseInt(start.split("-")[1]);
-  const endMonth = parseInt(end.split("-")[1]);
+  let startMonth = new Date(start).getMonth() + 1;
+  let endMonth = new Date(end).getMonth() + 1;
   for (let m = startMonth; m <= endMonth; m++) {
-    months.push("M" + m);
+    months.push(`M${m}`);
   }
   return months;
 }
 
-window.submitCreative = function() {
+async function submitCreative() {
   const name = document.getElementById("creative-name").value.trim();
   const adpiler = document.getElementById("adpiler-link").value.trim();
   const utm = document.getElementById("utm-link").value.trim();
   const status = document.getElementById("status").value;
   const updatedBy = document.getElementById("updated-by").value.trim();
-  const start = document.getElementById("start-date").value;
-  const end = document.getElementById("end-date").value;
+  const startDate = document.getElementById("start-date").value;
+  const endDate = document.getElementById("end-date").value;
 
-  if (!name || !utm || !start || !end) {
-    alert("Creative name, UTM link, and dates are required.");
+  if (!name || !utm || !startDate || !endDate) {
+    alert("Please fill in all required fields (Creative Name, UTM, Start Date, End Date).");
     return;
   }
 
-  const months = getMonthRange(start, end);
   const platform = parsePlatform(utm);
-  const creative = {
-    name, adpiler, utm, status, updatedBy, platform,
-    lastUpdated: new Date().toISOString().split("T")[0]
-  };
+  const months = getMonthsRange(startDate, endDate);
 
-  months.forEach(month => {
+  months.forEach((month) => {
     if (!creatives[currentClient][month]) creatives[currentClient][month] = {};
     if (!creatives[currentClient][month][platform]) creatives[currentClient][month][platform] = [];
-    creatives[currentClient][month][platform].push(creative);
+    creatives[currentClient][month][platform].push({
+      name,
+      adpiler,
+      utm,
+      status,
+      updatedBy,
+      lastUpdated: new Date().toISOString().split("T")[0],
+    });
   });
 
-  saveData();
+  await saveData();
   renderMonthTabs();
   document.getElementById("creative-form").reset();
-};
+}
 
 function renderMonthTabs() {
   const container = document.getElementById("tabs");
   container.innerHTML = "";
-  if (!creatives[currentClient]) return;
 
-  Object.keys(creatives[currentClient])
-    .sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)))
-    .forEach(month => {
-      const section = document.createElement("section");
-      section.innerHTML = `<h2>${month}</h2>`;
-      const monthData = creatives[currentClient][month];
+  if (!currentClient || !creatives[currentClient]) return;
 
-      ["Social", "Display", "CTV", "Audio", "TikTok"].forEach(platform => {
-        if (!monthData[platform] || monthData[platform].length === 0) return;
-        const card = document.createElement("div");
-        card.className = "platform-card";
-        card.innerHTML = `<h3>${platform}</h3>`;
-        const table = document.createElement("table");
-        table.innerHTML = `
-          <tr><th>Name</th><th>Adpiler</th><th>UTM</th><th>Status</th><th>Updated By</th><th>Date</th><th>Delete</th></tr>`;
-        
-        monthData[platform].forEach((c, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td contenteditable="true">${c.name}</td>
-            <td contenteditable="true">${c.adpiler}</td>
-            <td contenteditable="true">${c.utm}</td>
-            <td>
-              <select onchange="updateStatus('${month}', '${platform}', ${index}, this.value)">
-                <option value="Live" ${c.status === "Live" ? "selected" : ""}>Live</option>
-                <option value="Paused" ${c.status === "Paused" ? "selected" : ""}>Paused</option>
-                <option value="Retired" ${c.status === "Retired" ? "selected" : ""}>Retired</option>
-              </select>
-            </td>
-            <td contenteditable="true">${c.updatedBy}</td>
-            <td>${c.lastUpdated}</td>
-            <td><button onclick="deleteCreative('${month}', '${platform}', ${index})">🗑️</button></td>
-          `;
-          table.appendChild(row);
+  const months = Object.keys(creatives[currentClient]).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+
+  months.forEach((month) => {
+    const section = document.createElement("section");
+    section.innerHTML = `<h2>${month}</h2>`;
+    const monthData = creatives[currentClient][month];
+
+    ["Social", "Display", "CTV", "Audio", "TikTok", "Other"].forEach((platform) => {
+      if (!monthData[platform] || monthData[platform].length === 0) return;
+
+      const card = document.createElement("div");
+      card.className = "platform-card";
+      card.innerHTML = `<h3>${platform}</h3>`;
+
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <tr>
+          <th>Name</th>
+          <th>Adpiler</th>
+          <th>UTM</th>
+          <th>Status</th>
+          <th>Updated By</th>
+          <th>Last Updated</th>
+          <th>Delete</th>
+        </tr>
+      `;
+
+      monthData[platform].forEach((creative, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td contenteditable="true">${creative.name}</td>
+          <td contenteditable="true">${creative.adpiler}</td>
+          <td contenteditable="true">${creative.utm}</td>
+          <td>
+            <select class="status-dropdown">
+              <option value="Live" ${creative.status === "Live" ? "selected" : ""}>Live</option>
+              <option value="Paused" ${creative.status === "Paused" ? "selected" : ""}>Paused</option>
+              <option value="Retired" ${creative.status === "Retired" ? "selected" : ""}>Retired</option>
+            </select>
+          </td>
+          <td contenteditable="true">${creative.updatedBy}</td>
+          <td>${creative.lastUpdated}</td>
+          <td><button class="delete-btn">🗑️</button></td>
+        `;
+
+        // Save changes on blur or change
+        const saveCellChanges = () => {
+          creative.name = tr.children[0].innerText.trim();
+          creative.adpiler = tr.children[1].innerText.trim();
+          creative.utm = tr.children[2].innerText.trim();
+          creative.status = tr.querySelector(".status-dropdown").value;
+          creative.updatedBy = tr.children[4].innerText.trim();
+          creative.lastUpdated = new Date().toISOString().split("T")[0];
+          saveData();
+        };
+
+        tr.children[0].addEventListener("blur", saveCellChanges);
+        tr.children[1].addEventListener("blur", saveCellChanges);
+        tr.children[2].addEventListener("blur", saveCellChanges);
+        tr.querySelector(".status-dropdown").addEventListener("change", () => {
+          creative.status = tr.querySelector(".status-dropdown").value;
+          creative.lastUpdated = new Date().toISOString().split("T")[0];
+          saveData();
+          renderMonthTabs(); // Update badge colors
+        });
+        tr.children[4].addEventListener("blur", saveCellChanges);
+
+        // Delete creative
+        tr.querySelector(".delete-btn").addEventListener("click", async () => {
+          if (confirm("Delete this creative?")) {
+            monthData[platform].splice(index, 1);
+            await saveData();
+            renderMonthTabs();
+          }
         });
 
-        card.appendChild(table);
-        section.appendChild(card);
+        table.appendChild(tr);
       });
 
-      container.appendChild(section);
+      card.appendChild(table);
+      section.appendChild(card);
     });
+
+    container.appendChild(section);
+  });
 }
 
-window.updateStatus = function(month, platform, index, newStatus) {
-  creatives[currentClient][month][platform][index].status = newStatus;
-  saveData();
-};
+function updateCurrentClient(name) {
+  currentClient = name;
+  document.getElementById("current-client").innerText = name;
+}
 
-window.deleteCreative = function(month, platform, index) {
-  if (confirm("Delete this creative?")) {
-    creatives[currentClient][month][platform].splice(index, 1);
-    saveData();
-    renderMonthTabs();
+async function switchClient(name) {
+  updateCurrentClient(name);
+  renderMonthTabs();
+}
+
+window.addClient = async function () {
+  const name = prompt("Enter new client name:");
+  if (!name || creatives[name]) {
+    alert("Client name is empty or already exists.");
+    return;
   }
+  creatives[name] = {};
+  await saveData();
+  renderClientList();
+  switchClient(name);
 };
 
 function renderClientList() {
   const sidebar = document.getElementById("client-list");
   sidebar.innerHTML = "";
-  Object.keys(creatives).forEach(client => {
+  Object.keys(creatives).forEach((client) => {
     const li = document.createElement("li");
+    li.className = client === currentClient ? "active" : "";
     li.innerHTML = `
-      <span onclick="switchClient('${client}')">${client}</span>
-      <button onclick="deleteClient('${client}')">❌</button>`;
+      <span style="flex-grow:1;cursor:pointer;">${client}</span>
+      <button title="Delete Client">❌</button>
+    `;
+    li.querySelector("span").onclick = () => switchClient(client);
+    li.querySelector("button").onclick = async (e) => {
+      e.stopPropagation();
+      if (confirm(`Delete client "${client}"? This action cannot be undone.`)) {
+        delete creatives[client];
+        if (client === currentClient) {
+          const remaining = Object.keys(creatives);
+          if (remaining.length > 0) {
+            await switchClient(remaining[0]);
+          } else {
+            currentClient = null;
+            document.getElementById("tabs").innerHTML = "";
+          }
+        }
+        await saveData();
+        renderClientList();
+      }
+    };
     sidebar.appendChild(li);
   });
 }
 
-window.onload = () => {
-  if (Object.keys(creatives).length === 0) {
-    creatives["SkySanford"] = {};
-    saveData();
-  }
+window.onload = async () => {
+  githubToken = prompt("Please enter your GitHub personal access token:");
+  await loadData();
   renderClientList();
-  switchClient(currentClient);
+  if (currentClient) switchClient(currentClient);
 };
