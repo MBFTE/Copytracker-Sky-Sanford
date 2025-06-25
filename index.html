@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FTE Creative Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>FTE Creative Tracker</h1>
+
+  <div id="sections">
+    <!-- Platform Sections -->
+    <section id="social">
+      <h2>Social</h2>
+      <button onclick="addRow('socialTable')">Add Row</button>
+      <table id="socialTable">
+        <thead>
+          <tr><th>Month</th><th>Creative Name</th><th>Adpiler Link</th><th>Facebook UTM</th><th>Updated By</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="display">
+      <h2>Display</h2>
+      <button onclick="addRow('displayTable')">Add Row</button>
+      <table id="displayTable">
+        <thead>
+          <tr><th>Month</th><th>Creative Name</th><th>Adpiler Link</th><th>Display UTM</th><th>Updated By</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="ctv">
+      <h2>CTV</h2>
+      <button onclick="addRow('ctvTable')">Add Row</button>
+      <table id="ctvTable">
+        <thead>
+          <tr><th>Month</th><th>Creative Name</th><th>Adpiler Link</th><th>CTV UTM</th><th>Updated By</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="audio">
+      <h2>Audio</h2>
+      <button onclick="addRow('audioTable')">Add Row</button>
+      <table id="audioTable">
+        <thead>
+          <tr><th>Month</th><th>Creative Name</th><th>Adpiler Link</th><th>Audio UTM</th><th>Updated By</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="tiktok">
+      <h2>TikTok</h2>
+      <button onclick="addRow('tiktokTable')">Add Row</button>
+      <table id="tiktokTable">
+        <thead>
+          <tr><th>Month</th><th>Creative Name</th><th>Adpiler Link</th><th>TikTok UTM</th><th>Updated By</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+  <button onclick="clearAll()">Clear All</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
