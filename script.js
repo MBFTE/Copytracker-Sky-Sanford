@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const clientList = document.getElementById("clientList");
   const clientHeader = document.getElementById("clientHeader");
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("creatives", JSON.stringify(creatives));
   }
 
-  function switchClient(client) {
+  window.switchClient = function (client) {
     currentClient = client;
     document.querySelectorAll(".client").forEach(c => c.classList.remove("active"));
     const match = [...clientList.children].find(li => li.textContent.includes(client));
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabs();
   }
 
-  function addClient() {
+  window.addClient = function () {
     const name = prompt("Enter new client name:");
     if (name) {
       const li = document.createElement("li");
@@ -106,3 +105,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   switchClient(currentClient);
 });
+
+
+function renderClientList() {
+  clientList.innerHTML = "";
+  Object.keys(creatives).forEach(client => {
+    const li = document.createElement("li");
+    li.className = "client";
+    li.textContent = client;
+    li.onclick = () => switchClient(client);
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑️";
+    delBtn.style.marginLeft = "10px";
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (confirm(`Delete client "${client}"?`)) {
+        delete creatives[client];
+        saveData();
+        renderClientList();
+        currentClient = Object.keys(creatives)[0] || "";
+        if (currentClient) switchClient(currentClient);
+      }
+    };
+
+    li.appendChild(delBtn);
+    clientList.appendChild(li);
+  });
+
+  const addLi = document.createElement("li");
+  addLi.className = "add-client";
+  addLi.innerHTML = "<button>Add New Client</button>";
+  addLi.onclick = addClient;
+  clientList.appendChild(addLi);
+
+  switchClient(currentClient);
+}
+
+window.onload = () => {
+  renderClientList();
+};
