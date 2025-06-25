@@ -1,21 +1,263 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
 
-body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f1f6fa; }
-.layout { display: flex; }
-.sidebar { width: 220px; background: #1d2b40; color: white; padding: 20px; height: 100vh; }
-.sidebar .logo { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
-.sidebar ul { list-style: none; padding: 0; }
-.sidebar .client { margin-bottom: 10px; cursor: pointer; }
-.sidebar .client.active { font-weight: bold; color: #00d0ff; }
-.main { flex: 1; padding: 20px; }
-header { display: flex; justify-content: space-between; align-items: center; }
-form { margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
-input, select, button { padding: 8px; min-width: 200px; }
-.tabs { margin-bottom: 20px; }
-.tab { display: inline-block; margin-right: 10px; padding: 5px 10px; background: #ccc; border-radius: 5px; cursor: pointer; }
-.tab.active { background: #007bff; color: white; }
-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: white; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-.status-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; display: inline-block; color: white; }
-.status-Live { background-color: #28a745; }
-.status-Paused { background-color: #ffc107; color: black; }
-.status-Retired { background-color: #dc3545; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8fafc;
+  color: #1f2937;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar */
+#sidebar {
+  width: 220px;
+  background-color: #1e293b;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar h1 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+#client-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+#client-list li {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background-color: #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+#client-list li:hover {
+  background-color: #475569;
+}
+
+#client-list li.active {
+  background-color: #2563eb;
+}
+
+#client-list li button {
+  background: none;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 8px;
+  padding: 0;
+}
+
+#sidebar > li {
+  margin-top: 12px;
+  background-color: #2563eb;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Main area */
+main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+header h2 {
+  margin: 0 0 1rem;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #334155;
+}
+
+/* Form */
+#form-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  max-width: 800px;
+}
+
+#form-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+#creative-form input,
+#creative-form select,
+#creative-form button {
+  font-size: 1rem;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+#creative-form input:focus,
+#creative-form select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+#creative-form button {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+#creative-form button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Tabs and platform cards */
+#tabs section {
+  margin-bottom: 40px;
+}
+
+#tabs h2 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.platform-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.platform-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Editable cells */
+td[contenteditable="true"] {
+  background-color: #f9fafb;
+  cursor: text;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+td[contenteditable="true"]:focus {
+  background-color: #e0e7ff;
+  outline: none;
+}
+
+/* Status badges */
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  display: inline-block;
+  user-select: none;
+  cursor: default;
+}
+
+.status.Live {
+  background-color: #22c55e; /* Green */
+}
+
+.status.Paused {
+  background-color: #eab308; /* Yellow */
+  color: #202020;
+}
+
+.status.Retired {
+  background-color: #ef4444; /* Red */
+}
+
+/* Delete button */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #ef4444;
+  padding: 0;
+  user-select: none;
+}
+
+button:hover {
+  color: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  #app {
+    flex-direction: column;
+  }
+  #sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  #sidebar ul {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 0;
+  }
+  #sidebar li {
+    margin-bottom: 0;
+  }
+  main {
+    padding: 12px;
+  }
+}
