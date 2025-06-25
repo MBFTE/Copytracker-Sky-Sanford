@@ -1,95 +1,21 @@
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f1f6fa;
-}
-.layout {
-  display: flex;
-}
-.sidebar {
-  width: 220px;
-  background: #1d2b40;
-  color: white;
-  padding: 20px;
-  height: 100vh;
-}
-.sidebar .logo {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-.sidebar .client {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-.sidebar .client.active {
-  font-weight: bold;
-  color: #00d0ff;
-}
-.main {
-  flex: 1;
-  padding: 20px;
-}
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-form {
-  margin: 20px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-input, select, button {
-  padding: 8px;
-  min-width: 200px;
-}
-.tabs {
-  margin-bottom: 20px;
-}
-.tab {
-  display: inline-block;
-  margin-right: 10px;
-  padding: 5px 10px;
-  background: #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.tab.active {
-  background: #007bff;
-  color: white;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 30px;
-  background: white;
-}
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-.status-pill {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  display: inline-block;
-  color: white;
-}
-.status-Live {
-  background-color: #28a745;
-}
-.status-Paused {
-  background-color: #ffc107;
-  color: black;
-}
-.status-Retired {
-  background-color: #dc3545;
-}
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f1f6fa; }
+.layout { display: flex; }
+.sidebar { width: 220px; background: #1d2b40; color: white; padding: 20px; height: 100vh; }
+.sidebar .logo { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar .client { margin-bottom: 10px; cursor: pointer; }
+.sidebar .client.active { font-weight: bold; color: #00d0ff; }
+.main { flex: 1; padding: 20px; }
+header { display: flex; justify-content: space-between; align-items: center; }
+form { margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+input, select, button { padding: 8px; min-width: 200px; }
+.tabs { margin-bottom: 20px; }
+.tab { display: inline-block; margin-right: 10px; padding: 5px 10px; background: #ccc; border-radius: 5px; cursor: pointer; }
+.tab.active { background: #007bff; color: white; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: white; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.status-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; display: inline-block; color: white; }
+.status-Live { background-color: #28a745; }
+.status-Paused { background-color: #ffc107; color: black; }
+.status-Retired { background-color: #dc3545; }

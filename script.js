@@ -53,16 +53,23 @@ document.addEventListener("DOMContentLoaded", () => {
     ["Facebook", "Display", "CTV", "Audio", "TikTok"].forEach(platform => {
       if (!data[platform]) return;
       const table = document.createElement("table");
-      const thead = `<tr><th>Name</th><th>Adpiler</th><th>UTM</th><th>Status</th><th>Updated By</th></tr>`;
+      const thead = `<tr><th>Name</th><th>Adpiler</th><th>UTM</th><th>Status</th><th>Updated By</th><th>Actions</th></tr>`;
       table.innerHTML = `<caption>${platform}</caption><thead>${thead}</thead><tbody></tbody>`;
-      data[platform].forEach(item => {
+      data[platform].forEach((item, index) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td contenteditable="true">${item.name}</td>
-          <td contenteditable="true"><a href="${item.adpiler}" target="_blank">Link</a></td>
-          <td contenteditable="true"><a href="${item.utm}" target="_blank">UTM</a></td>
-          <td><span class="status-pill status-${item.status}">${item.status}</span></td>
+          <td contenteditable="true">${item.adpiler}</td>
+          <td contenteditable="true">${item.utm}</td>
+          <td>
+            <select class="status-dropdown">
+              <option value="Live" ${item.status === "Live" ? "selected" : ""}>Live</option>
+              <option value="Paused" ${item.status === "Paused" ? "selected" : ""}>Paused</option>
+              <option value="Retired" ${item.status === "Retired" ? "selected" : ""}>Retired</option>
+            </select>
+          </td>
           <td contenteditable="true">${item.updatedBy}</td>
+          <td><button onclick="this.closest('tr').remove();">🗑️</button></td>
         `;
         table.querySelector("tbody").appendChild(tr);
       });
