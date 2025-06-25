@@ -10,7 +10,7 @@ body {
   color: #1f2937;
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; /* prevent body scroll */
 }
 
 /* Sidebar */
@@ -21,6 +21,8 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 #sidebar h1 {
@@ -65,6 +67,7 @@ body {
   font-size: 1rem;
   margin-left: 8px;
   padding: 0;
+  user-select: none;
 }
 
 #sidebar > li {
@@ -83,9 +86,11 @@ main {
   display: flex;
   flex-direction: column;
   padding: 24px;
-  overflow-y: auto;
+  overflow-y: auto; /* enable vertical scroll */
+  height: 100vh;
 }
 
+/* Header */
 header h2 {
   margin: 0 0 1rem;
   font-weight: 600;
