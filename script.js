@@ -1,3 +1,1 @@
-
-// JS logic will include client switching, editable table, color-coded statuses, and persistent saving
-console.log("Placeholder for full-featured client tracker UI script.");
+// JS will handle full client switching, month filtering, table edit/delete, and data persistence.

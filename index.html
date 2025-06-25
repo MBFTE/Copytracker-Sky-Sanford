@@ -2,63 +2,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Creative Tracker - Client View</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Creative Tracker - Full System</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <div class="logo">FTE</div>
-      <nav>
-        <ul id="clientList">
-          <li class="active" onclick="switchClient('SkySanford')">Sky Sanford</li>
-          <li onclick="switchClient('DeLandMotorsports')">DeLand Motorsports</li>
-          <li onclick="switchClient('BurtchTallow')">Burtch Tallow</li>
-        </ul>
-      </nav>
+      <div class="logo">FTE Tracker</div>
+      <ul id="clientList">
+        <li class="client active" onclick="switchClient('SkySanford')">Sky Sanford</li>
+        <li class="client" onclick="switchClient('DeLandMotorsports')">DeLand Motorsports</li>
+        <li class="client" onclick="switchClient('BurtchTallow')">Burtch Tallow</li>
+        <li class="client" onclick="addClient()">+ Add Client</li>
+      </ul>
     </aside>
-
     <main class="main">
-      <header class="main-header">
+      <header>
         <h1 id="clientHeader">Sky Sanford</h1>
-        <button class="add-btn">+ Add Creative</button>
+        <button onclick="addCreative()" class="add-btn">+ Add Creative</button>
+        <button onclick="addMonth()">+ Add Month</button>
       </header>
 
-      <section class="table-controls">
-        <input type="text" placeholder="Search..." class="search" />
-        <select class="filter-status">
-          <option>Status Filter</option>
-          <option>Live</option>
-          <option>Paused</option>
-          <option>Retired</option>
+      <form id="creativeForm">
+        <select id="monthDropdown" required>
+          <option value="">Select Month</option>
+          <option value="M1">M1</option>
+          <option value="M2">M2</option>
+          <option value="M3">M3</option>
+          <option value="M4">M4</option>
+          <option value="M5">M5</option>
+          <option value="M6">M6</option>
+          <option value="M7">M7</option>
+          <option value="M8">M8</option>
+          <option value="M9">M9</option>
+          <option value="M10">M10</option>
+          <option value="M11">M11</option>
+          <option value="M12">M12</option>
         </select>
-      </section>
+        <input type="date" id="startDate" required />
+        <input type="date" id="endDate" />
+        <input type="text" id="creativeName" placeholder="Creative Name" required />
+        <input type="url" id="adpilerLink" placeholder="Adpiler Link" required />
+        <input type="url" id="utmUrl" placeholder="UTM URL" required />
+        <select id="status">
+          <option value="Live">Live</option>
+          <option value="Paused">Paused</option>
+          <option value="Retired">Retired</option>
+        </select>
+        <input type="text" id="updatedBy" placeholder="Updated By" required />
+        <button type="submit">Submit</button>
+      </form>
 
-      <section class="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th><input type="checkbox" /></th>
-              <th>Creative</th>
-              <th>Status</th>
-              <th>Platform</th>
-              <th>UTM</th>
-              <th>Start</th>
-              <th>End</th>
-              <th>Updated By</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="creativeTable">
-            <!-- Data will be populated here -->
-          </tbody>
-        </table>
-      </section>
-
-      <footer class="pagination">
-        <span>Page 1 of 8</span>
-      </footer>
+      <div id="monthTabs" class="tabs"></div>
+      <div id="platformTables" class="content"></div>
     </main>
   </div>
   <script src="script.js"></script>
