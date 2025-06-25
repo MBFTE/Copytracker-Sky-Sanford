@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const clientList = document.getElementById("clientList");
   const clientHeader = document.getElementById("clientHeader");
